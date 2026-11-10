@@ -453,6 +453,59 @@ fetch("data/tracts.topojson")
     console.error(error);
   });
 
+ ////////////////////////////////////////////////////////////
+// Add white state boundary outlines
+////////////////////////////////////////////////////////////
+
+// Create a separate pane above the tract polygons
+map.createPane("stateBoundaries");
+map.getPane("stateBoundaries").style.zIndex = 450;
+map.getPane("stateBoundaries").style.pointerEvents = "none";
+
+// Load state boundaries
+fetch("data/states.geojson")
+
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error(
+        "Cannot load states.geojson"
+      );
+    }
+
+    return response.json();
+  })
+
+  .then(statesData => {
+
+    const stateLayer = L.geoJSON(
+      statesData,
+      {
+        pane: "stateBoundaries",
+
+        style: {
+          color: "#FFFFFF",
+          weight: 1.5,
+          opacity: 1,
+          fill: false,
+          interactive: false
+        }
+      }
+    ).addTo(map);
+
+    console.log(
+      "State boundaries loaded:",
+      statesData.features.length
+    );
+  })
+
+  .catch(error => {
+    console.error(
+      "Error loading state boundaries:",
+      error
+    );
+  });
+
 ////////////////////////////////////////////////////////////
 // Load actual geocoded provider locations
 ////////////////////////////////////////////////////////////
